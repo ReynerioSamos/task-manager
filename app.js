@@ -4,8 +4,11 @@ const path = require('path');
 const app = express();
 const port = 3000;
 
+// calling the middleware to be used
 const {
+    // helps with logging routes
     loggingMiddleware,
+    // redirects to another route
     redirectingMiddleware,
     errorHandlingMiddleware,
 } = require('./middleware/middleware');

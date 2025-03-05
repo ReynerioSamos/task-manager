@@ -5,6 +5,8 @@ const loggingMiddleware = (req, res, next) => {
     next();
 };
 
+// middleware to intercept routes, execute whatever they were dong and send them back to homeroute
+// which also redirects to /tasks
 const redirectingMiddleware = (routesToRedirect, homeRoute = '/') => {
     return (req, res, next) => {
         if (routesToRedirect.includes(req.path)) {

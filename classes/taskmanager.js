@@ -1,4 +1,7 @@
 //filename: classes/taskmanager.js
+// A lot of the array manipulation is done here alongside sorting and searching
+
+
 const Task = require('./task');
 //const fs = require('fs');
 const path = require('path');
@@ -36,6 +39,8 @@ class TaskManager {
         fs.writeFileSync(DATA_FILE, data);
     }
     */
+
+
     // add a new task to the array, takes task obj
     addTask(task) {
         this.tasks.push(task);
@@ -70,6 +75,7 @@ class TaskManager {
         );
     }
     
+    //filters tasks based on their status, takes it a string and corresponds correct boolean val
     filterTasks(status) {
         if (status === 'completed') {
             return this.tasks.filter(task => task.completed === true);
@@ -88,6 +94,7 @@ class TaskManager {
             'Low': 1
         };
 
+        // sorts from highest to lowest or lowest to highest based on criteria (in this case prio)
         return this.tasks.sort((a, b) => {
             switch(criteria) {
                 case 'priority':

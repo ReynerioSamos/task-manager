@@ -2,7 +2,7 @@
 const express = require('express');
 // creating task object to store task data
 class Task {
-    // all tasks are initialized as uncompleted
+    // all tasks are initialized as uncompleted with medium prio
     constructor(id, title, desc, completed = false, priority = 'Medium') {
         this.id = id;
         this.title = title;
