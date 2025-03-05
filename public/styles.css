@@ -1,0 +1,18 @@
+body { 
+    font-family: Arial, sans-serif; padding: 2rem;
+}
+
+form { 
+    max-width: 400px; margin: auto;
+}
+
+label, input, button { 
+    display: block; margin-bottom: 1rem; 
+}
+input { 
+    padding: 0.5rem; width: 100%;
+}
+
+button { 
+    padding: 0.5rem; cursor: pointer;
+}
