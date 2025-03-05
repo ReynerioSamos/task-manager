@@ -18,15 +18,16 @@ app.use(express.json());
 app.set("view engine", "ejs");
 app.set("views", path.join(process.cwd(), "views"));
 
-app.use('/tasks', taskRoutes);
 app.use(loggingMiddleware)
+app.use('/tasks', taskRoutes);
+
 
 // these are the routes that will be redirected to the homepage
-//const routesToRedirect = [''];
+const routesToRedirect = [''];
 // defaults to redirecting back to homepage
-//app.use(redirectingMiddleware(routesToRedirect, '/'));
+app.use(redirectingMiddleware(routesToRedirect, '/'));
 
-//app.use(errorHandlingMiddleware('/error'));
+app.use(errorHandlingMiddleware('/error'));
 //listen and announce port for running server
 app.listen(port, () => {
     console.log(`Server running at http://localhost:${port}`);

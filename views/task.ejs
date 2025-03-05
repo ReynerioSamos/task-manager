@@ -3,19 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Task List</title>
+    <title>Task</title>
     <link rel="stylesheet" href="/style.css">
-</head>
-<body>
-    <h1>Task</h1>
-            <li>
-                <span><%= task.title %></span> - <span><%= task.desc %></span>
-                <form action="/tasks/toggle/<%= task.id %>" method="POST" style="display:inline;">
-                    <button type="submit"><%= task.completed ? 'Mark Incomplete' : 'Mark Complete' %></button>
-                </form>
-                <form action="/tasks/delete/<%= task.id %>" method="POST" style="display:inline;">
-                    <button type="submit">Delete</button>
-                </form>
-            </li>
-</body>
+    <body>
+        <h1>Task</h1>
+        <% if (task) { %>
+            <ul>
+                <li class="<%= task.completed ? 'completed' : 'incomplete' %>">
+                    <span><%= task.title %></span> - <span><%= task.desc %></span>
+                    <form action="/tasks/toggle-task/<%= task.id %>" method="POST" style="display:inline;">
+                        <button type="submit" aria-label="<%= task.completed ? 'Mark Incomplete' : 'Mark Complete' %>">
+                            <%= task.completed ? 'Mark Incomplete' : 'Mark Complete' %>
+                        </button>
+                    </form>
+                    <form action="/tasks/delete-task/<%= task.id %>" method="POST" style="display:inline;">
+                        <button type="submit" aria-label="Delete Task">Delete</button>
+                    </form>
+                </li>
+            </ul>
+        <% } else { %>
+            <p>Task not found.</p>
+        <% } %>
+        <a href="/tasks">Back to Task List</a>
+    </body>
 </html>

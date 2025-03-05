@@ -16,6 +16,7 @@ const redirectingMiddleware = (routesToRedirect, homeRoute = '/') => {
     };
 };
 
+
 const errorHandlingMiddleware = (errorPageRoute = '/error') => (err, req, res, next) => {
     console.error("Error:", err);
 
@@ -32,7 +33,7 @@ const errorHandlingMiddleware = (errorPageRoute = '/error') => (err, req, res, n
 };
 
 
-module.export = {
+module.exports = {
     loggingMiddleware,
     redirectingMiddleware,
     errorHandlingMiddleware,

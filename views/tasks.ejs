@@ -10,7 +10,7 @@
     <h1>Task List</h1>
 
     <!-- Add Task Form -->
-    <form action="/tasks/add" method="POST">
+    <form action="/tasks/add-task" method="POST">
         <div>
             <label for="title">Title:</label>
             <input type="text" id="title" name="title" required>
@@ -23,21 +23,29 @@
     </form>
 
     <!-- Task List -->
-    <ul>
-        <% tasks.forEach(task => { %>
-            <li>
-                <span><%= task.title %></span> - <span><%= task.desc %></span>
-                <form action="/tasks/toggle/<%= task.id %>" method="POST" style="display:inline;">
-                    <button type="submit"><%= task.completed ? 'Mark Incomplete' : 'Mark Complete' %></button>
-                </form>
-                <form action="/tasks/delete/<%= task.id %>" method="POST" style="display:inline;">
-                    <button type="submit">Delete</button>
-                </form>
-                <form action="/tasks/<%= task.id %>" method="GET" style="display:inline;">
-                    <button type="submit">View</button>
-                </form>
-            </li>
-        <% }); %>
-    </ul>
+    <% if (tasks.length === 0) { %>
+        <p>No tasks found. Add a new task above!</p>
+    <% } else { %>
+        <ul>
+            <% tasks.forEach(task => { %>
+                <li class="<%= task.completed ? 'completed' : 'incomplete' %>">
+                    <span><%= task.title %></span> - <span><%= task.desc %></span>
+                    <form action="/tasks/toggle-task/<%= task.id %>" method="POST" style="display:inline;">
+                        <input type="hidden" name="id" value="<%= task.id %>">
+                        <button type="submit" aria-label="<%= task.completed ? 'Mark Incomplete' : 'Mark Complete' %>">
+                            <%= task.completed ? 'Mark Incomplete' : 'Mark Complete' %>
+                        </button>
+                    </form>
+                    <form action="/tasks/delete-task/<%= task.id %>" method="POST" style="display:inline;">
+                        <input type="hidden" name="id" value="<%= task.id %>">
+                        <button type="submit" aria-label="Delete Task">Delete</button>
+                    </form>
+                    <form action="/tasks/<%= task.id %>" method="GET" style="display:inline;">
+                        <button type="submit" aria-label="View Task">View</button>
+                    </form>
+                </li>
+            <% }); %>
+        </ul>
+    <% } %>
 </body>
 </html>

@@ -40,21 +40,29 @@ class TaskManager {
     addTask(task) {
         this.tasks.push(task);
     }
+
+    // display task given id from array, takes int
+    getTask(taskID) {
+        const task = this.tasks.find(task => task.id === taskID);
+        console.log(`Looking for task with ID ${taskID} . Found:`, task);
+        return task;
+    }
+
     // delete task given id from array, takes int
     deleteTask(taskIDToDelete) {
-        this.tasks = this.tasks.filter(task => task.id !== taskIDToDelete)
+        this.tasks = this.tasks.filter(task => task.id !== taskIDToDelete);
+        console.log(`Task with ID: ${taskIDToDelete} deleted. Remaining tasks`, this.tasks);
     }
-    // display task iven id from array, takes int
-    getTask(taskID) {
-        return this.tasks.find(task => task.id === taskID);
-    }
+
     // display all current tasks in the array
     displayAllTasks() {
-        this.tasks.forEach(task => task.displayAllTasks());
+        this.tasks.forEach(task => task.displayTask());
     }
+
     // filters tasks based on completed status, takes string
     displayFilteredTasks(status) {
-        const filteredTasks = this.tasks.filter(task => task.completed === status);
+        const isCompleted = status == 'true';
+        const filteredTasks = this.tasks.filter(task => task.completed === isCompleted);
 
         if (filteredTasks.length === 0){
             console.log(`No tasks found with completed status: ${status}`);
