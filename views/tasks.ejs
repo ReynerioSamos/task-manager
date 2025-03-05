@@ -19,6 +19,14 @@
             <label for="desc">Description:</label>
             <textarea id="desc" name="desc" required></textarea>
         </div>
+        <div>
+            <label for="priority">Priority:</label>
+            <select id="priority" name="priority">
+                <option value="Low">Low</option>
+                <option value="Medium" selected>Medium</option>
+                <option value="High">High</option>
+            </select>
+        </div>
         <button type="submit">Add Task</button>
     </form>
 
@@ -55,6 +63,13 @@
         <button type="submit">Filter</button>
     </form>
 
+    <!-- Sorting options -->
+    <div class="sorting-options">
+        <span>Sort by:</span>
+        <a href="/tasks/sort?criteria=priority&order=desc">Priority (High to Low)</a>
+        <a href="/tasks/sort?criteria=priority&order=asc">Priority (Low to High)</a>
+    </div>
+
     <!-- Back to All Tasks Link -->
     <a href="/tasks">Back to All Tasks</a>
     
@@ -79,9 +94,12 @@
                     <form action="/tasks/<%= task.id %>" method="GET" style="display:inline;">
                         <button type="submit" aria-label="View Task">View</button>
                     </form>
+                    <p>Priority: <%= task.priority %></p>
                 </li>
             <% }); %>
         </ul>
     <% } %>
+    <!-- Include the footer partial -->
+    <%- include('partials/footer') %>
 </body>
 </html>

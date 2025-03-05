@@ -16,18 +16,23 @@ router.get('/', (req, res) => {
 router.post('/add-task', (req, res) => {
     const {
         title,
-        desc
+        desc,
+        priority = 'Medium' //default value
     } = req.body;
 
     if (!title || !desc) {
         return res.status(400).send(`Title and description are required.`);
     }
+    // Validate priority or default to 'Medium'
+    const validPriorities = ['Low', 'Medium', 'High'];
+    const taskPriority = validPriorities.includes(priority) ? priority : 'Medium';
+    
 
     const id = tasknum++;
 
-    const newTask = new Task(id, title, desc);
+    const newTask = new Task(id, title, desc, false, taskPriority);
     taskManager.addTask(newTask);
-    console.log(`Added new task with ID: ${id}`);
+    console.log(`Added new task with ID: ${id} and priority ${taskPriority}`);
     res.redirect('/tasks');
 });
 
@@ -85,6 +90,19 @@ router.get('/search', (req, res) => {
 
     // Render the tasks.ejs file with the filtered tasks
     res.render('tasks', { tasks: filteredTasks });
+});
+
+router.get('/sort', (req, res) => {
+    const { criteria, order } = req.query;
+    
+    // Sort tasks
+    const sortedTasks = taskManager.sortTasks(criteria, order);
+
+    res.render('tasks', { 
+        tasks: sortedTasks,
+        sortCriteria: criteria,
+        sortOrder: order
+    });
 });
 
  router.get('/:id', (req, res) => {

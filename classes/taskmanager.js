@@ -80,6 +80,30 @@ class TaskManager {
         }
     }
 
+    sortTasks(criteria = 'priority', order = 'desc') {
+        // Define priority order
+        const priorityOrder = {
+            'High': 3,
+            'Medium': 2,
+            'Low': 1
+        };
+
+        return this.tasks.sort((a, b) => {
+            switch(criteria) {
+                case 'priority':
+                    const priorityComparison = priorityOrder[b.priority] - priorityOrder[a.priority];
+                    return order === 'desc' ? priorityComparison : -priorityComparison;
+                
+                case 'title':
+                    return order === 'desc' 
+                        ? b.title.localeCompare(a.title) 
+                        : a.title.localeCompare(b.title);
+                
+                default:
+                    return 0;
+            }
+        });
+    }
 }
 
 module.exports = TaskManager;
