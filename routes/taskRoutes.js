@@ -1,42 +1,62 @@
 const express = require('express');
 const router = express.Router();
+const Task = require('../classes/task');
 const TaskManager = require('../classes/taskmanager');
 
+let tasknum = 0;
 const taskManager = new TaskManager();
 
 router.get('/', (req, res) => {
-    const tasks = taskManager.displayAllTasks();
-    res.json(tasks);
+    const tasks = taskManager.tasks;
+    res.render('tasks', {
+        tasks
+    });
 });
 
-router.post('add-task', (req, res) => {
-    const {title, description } = req.body;
-    if (!title || !description) {
-        return res.status(400).json({ error: 'Title and description are required' });
+router.post('/add-task', (req, res) => {
+    const {
+        title,
+        desc
+    } = req.body;
+
+    if (!title || !desc) {
+        return res.status(400).send(`Title and description are required.`);
     }
 
-    const newTask = taskManager.addTask(title,description);
-    res.status(201).json(newTask);
+    const id = tasknum;
+    tasknum = tasknum++;
+
+    const newTask = new Task(id, title, desc);
+    taskManager.addTask(newTask);
+    res.redirect('/tasks');
 });
 
 router.post('/toggle-task/:id', (req, res) => {
-    const { id } = req.params;
+    const taskID = req.params.id;
+    const task = taskManager.getTask(taskID);
 
-    if (taskManager.toggleTaskStatus(id)){
-        res.json({ message: 'Task status toggled successfully'});
-    } else {
-        res.status(404).json({ error: 'Task not found'});
+    if (!task) {
+        return res.status(404).send(`Task not found`);
     }
+    task.toggleCompleted;
+    res.redirect('/tasks');
  });
 
  router.post('/delete-task/:id', (req, res) => {
-    const { id } = req.params;
+    const taskId = req.params.id;
+    taskManager.deleteTask(taskId);
+    res.redirect('/tasks');
+ });
 
-    if (taskManager.deleteTask(id)) {
-        res.join({ message: 'Task deleted succeessfully' });
-    } else {
-        res.status(404).json({ error: 'Task not found'});
+ router.get('/:id', (req, res) => {
+    const task = taskManager.getTask(taskID);
+
+    if (!task) {
+        return res.status(400).send(`Task not found`);
     }
+    res.render('task', {
+        task
+    });
  });
 
  module.exports = router;
