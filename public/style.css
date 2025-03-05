@@ -43,6 +43,24 @@ button[type="submit"] {
 button[type="submit"]:hover {
     background-color: #218838;
 }
+.search-form {
+    display: flex;
+    margin-bottom: 20px;
+}
+
+.search-form input {
+    flex-grow: 1;
+    margin-right: 10px;
+}
+
+.search-form button {
+    background-color: #17a2b8;
+    white-space: nowrap;
+}
+
+.search-form button:hover {
+    background-color: #138496;
+}
 
 a {
     display: inline-block;

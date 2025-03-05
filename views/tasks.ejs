@@ -22,6 +22,28 @@
         <button type="submit">Add Task</button>
     </form>
 
+    <!-- Search by title/desc -->
+<form action="/tasks/search" method="GET" class="search-form">
+    <input 
+        type="text" 
+        name="q" 
+        placeholder="Search tasks..." 
+        value="<%= locals.searchQuery || '' %>"
+    >
+    <button type="submit">Search</button>
+</form>
+
+<!-- Message for search results -->
+<% if (locals.searchQuery) { %>
+    <p>
+        <% if (tasks.length === 0) { %>
+            No tasks found matching "<%= searchQuery %>"
+        <% } else { %>
+            <%= tasks.length %> task(s) found for "<%= searchQuery %>"
+        <% } %>
+    </p>
+<% } %>
+
     <!-- Filter Tasks Dropdown -->
     <form action="/tasks/filter-tasks" method="GET" class="filter-form">
         <label for="status">Filter by Status:</label>

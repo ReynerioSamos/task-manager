@@ -59,6 +59,17 @@ class TaskManager {
         this.tasks.forEach(task => task.displayTask());
     }
 
+    searchTasks(query) {
+        // Convert query to lowercase for case-insensitive search
+        const lowercaseQuery = query.toLowerCase().trim();
+        
+        // Filter tasks where either title or description includes the query
+        return this.tasks.filter(task => 
+            task.title.toLowerCase().includes(lowercaseQuery) || 
+            task.desc.toLowerCase().includes(lowercaseQuery)
+        );
+    }
+    
     filterTasks(status) {
         if (status === 'completed') {
             return this.tasks.filter(task => task.completed === true);
@@ -68,6 +79,7 @@ class TaskManager {
             return this.tasks; // Return all tasks if status is 'all' or invalid
         }
     }
+
 }
 
 module.exports = TaskManager;

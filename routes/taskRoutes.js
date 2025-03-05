@@ -59,6 +59,24 @@ router.post('/delete-task/:id', (req, res) => {
     res.redirect('/tasks');
  });
  
+router.get('/search', (req, res) => {
+    const query = req.query.q; // Get the search query from query parameter
+
+    // Handle empty search query
+    if (!query || query.trim() === '') {
+        return res.render('tasks', { tasks: taskManager.tasks, searchQuery: query });
+    }
+
+    // Perform the search
+    const searchResults = taskManager.searchTasks(query);
+
+    // Render the tasks view with search results
+    res.render('tasks', { 
+        tasks: searchResults, 
+        searchQuery: query 
+    });
+});
+
  router.get('/filter-tasks', (req, res) => {
     const status = req.query.status; // Get the status from the query parameter
 
