@@ -49,6 +49,7 @@ router.post('/toggle-task/:id', (req, res) => {
  });
 
  router.get('/:id', (req, res) => {
+    const taskID = req.params.id;
     const task = taskManager.getTask(taskID);
 
     if (!task) {
