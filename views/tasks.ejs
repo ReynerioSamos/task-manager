@@ -22,6 +22,20 @@
         <button type="submit">Add Task</button>
     </form>
 
+    <!-- Filter Tasks Dropdown -->
+    <form action="/tasks/filter-tasks" method="GET" class="filter-form">
+        <label for="status">Filter by Status:</label>
+        <select id="status" name="status">
+            <option value="all">All Tasks</option>
+            <option value="completed">Completed</option>
+            <option value="uncompleted">Uncompleted</option>
+        </select>
+        <button type="submit">Filter</button>
+    </form>
+
+    <!-- Back to All Tasks Link -->
+    <a href="/tasks">Back to All Tasks</a>
+    
     <!-- Task List -->
     <% if (tasks.length === 0) { %>
         <p>No tasks found. Add a new task above!</p>

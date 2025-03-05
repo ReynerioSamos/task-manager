@@ -1,9 +1,9 @@
 //filename: classes/taskmanager.js
 const Task = require('./task');
-const fs = require('fs');
+//const fs = require('fs');
 const path = require('path');
 
-const DATA_FILE = path.join(__dirname, 'task.json');
+//const DATA_FILE = path.join(__dirname, 'task.json');
 // class datastructure to manage tasks using arrays
 class TaskManager {
     // empty array
@@ -59,18 +59,14 @@ class TaskManager {
         this.tasks.forEach(task => task.displayTask());
     }
 
-    // filters tasks based on completed status, takes string
-    displayFilteredTasks(status) {
-        const isCompleted = status == 'true';
-        const filteredTasks = this.tasks.filter(task => task.completed === isCompleted);
-
-        if (filteredTasks.length === 0){
-            console.log(`No tasks found with completed status: ${status}`);
-            return;
+    filterTasks(status) {
+        if (status === 'completed') {
+            return this.tasks.filter(task => task.completed === true);
+        } else if (status === 'uncompleted') {
+            return this.tasks.filter(task => task.completed === false);
+        } else {
+            return this.tasks; // Return all tasks if status is 'all' or invalid
         }
-
-        console.log(`Tasks with completed status: ${status}`);
-        filteredTasks.forEach(task => task.displayTask());
     }
 }
 

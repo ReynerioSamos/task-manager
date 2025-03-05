@@ -58,6 +58,16 @@ router.post('/delete-task/:id', (req, res) => {
     console.log(`Remaining tasks:`, taskManager.tasks);
     res.redirect('/tasks');
  });
+ 
+ router.get('/filter-tasks', (req, res) => {
+    const status = req.query.status; // Get the status from the query parameter
+
+    // Use the filterTasks method to get the filtered tasks
+    const filteredTasks = taskManager.filterTasks(status);
+
+    // Render the tasks.ejs file with the filtered tasks
+    res.render('tasks', { tasks: filteredTasks });
+});
 
  router.get('/:id', (req, res) => {
     const taskID = parseInt(req.params.id, 10);
@@ -70,5 +80,7 @@ router.post('/delete-task/:id', (req, res) => {
         task
     });
  });
+
+ 
 
  module.exports = router;

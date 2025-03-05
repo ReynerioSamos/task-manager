@@ -18,6 +18,8 @@ app.use(express.json());
 app.set("view engine", "ejs");
 app.set("views", path.join(process.cwd(), "views"));
 
+//redirects '/' to '/tasks' since main functionality of app is there ans using tasks.ejs view
+app.get('/', (req, res) => {res.redirect('/tasks');});
 app.use(loggingMiddleware)
 app.use('/tasks', taskRoutes);
 
