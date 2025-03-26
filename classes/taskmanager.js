@@ -1,45 +1,16 @@
-//filename: classes/taskmanager.js
+// Filename: classes/taskmanager.js
 // A lot of the array manipulation is done here alongside sorting and searching
 
 
 const Task = require('./task');
-//const fs = require('fs');
 const path = require('path');
 
-//const DATA_FILE = path.join(__dirname, 'task.json');
 // class datastructure to manage tasks using arrays
 class TaskManager {
     // empty array
     constructor() {
         this.tasks = [];
-        //this.nextID = 1;
-        //this.loadTasks();
     }
-
-    // below is code to implement saving tasks to a file
-/*
-    loadTasks() {
-        try {
-            const data = fs.readFileSync(DATA_FILE, 'utf-8');
-            const parsedData = JSON.parse(data);
-
-            this.tasks = parsedData.task.map(taskData => new Task(taskData.id, taskData.title, 
-                                            taskData.desc, taskData.completed));
-            this.nextID = parsedData.nextID;
-        } catch (err) {
-            console.warn('Could not load tasks from file. Starting with an empty task list', err);
-            this.tasks = [];
-            this.nextID = 1;
-            this.saveTasks();
-        }
-    }
-
-    saveTasks() {
-        const data = JSON.stringify({ tasks: this.tasks, nextID: this.nextID}, null, 2);
-        fs.writeFileSync(DATA_FILE, data);
-    }
-    */
-
 
     // add a new task to the array, takes task obj
     addTask(task) {
