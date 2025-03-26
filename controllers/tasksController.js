@@ -1,9 +1,10 @@
-// Filename: controllers/tasks.js
+// Filename: controllers/tasksController.js
+import { Task, TaskManager } from "../models/tasksModel.js";
+const taskManager = new TaskManager();
+
 export const getHome = (req, res) => {
     const tasks = taskManager.tasks;
-    res.render('tasks', {
-        tasks
-    });
+    res.render('tasks', { tasks });
 };
 
 export const addTask = (req, res) => {
@@ -19,25 +20,23 @@ export const addTask = (req, res) => {
     // Validate priority or default to 'Medium'
     const validPriorities = ['Low', 'Medium', 'High'];
     const taskPriority = validPriorities.includes(priority) ? priority : 'Medium';
-    
-    // increments the tasknum by 1
-    const id = tasknum++;
 
     // stores and adds new task to array, logs and redirects to home
-    const newTask = new Task(id, title, desc, false, taskPriority);
-    taskManager.addTask(newTask);
-    console.log(`Added new task with ID: ${id} and priority ${taskPriority}`);
+    const newTask = taskManager.addTask(title,desc, priority);
+    console.log(`Added new task with priority ${taskPriority}`);
     res.redirect('/tasks');
 };
 
 export const toggleTask = (req, res) => {
     const taskID = parseInt(req.params.id);
     console.log(`Attempting to toggle task with ID: ${taskID}`);
+
     const task = taskManager.getTask(taskID);
     if (!task) {
         console.log(`Task with ID: ${taskID} was not found`);
         return res.status(404).send(`Task not found`);
     }
+
     task.toggleCompleted();
     console.log(`Task with ID: ${taskID} was successfully toggled with new status: `, task.completed);
     res.redirect('/tasks');
@@ -47,11 +46,13 @@ export const toggleTask = (req, res) => {
     const taskID = parseInt(req.params.id, 10);
     console.log(`Attempting to delete task with ID: ${taskID}`);
     console.log(`Current tasks:`, taskManager.tasks);
+
     const task = taskManager.getTask(taskID);
     if (!task) {
         console.log(`Task with ID: ${taskID} not found`);
         return res.status(404).send(`Task not found`);
     }
+    
     taskManager.deleteTask(taskID);
     console.log(`Task with ID: ${taskID} deleted successfully`)
     console.log(`Remaining tasks:`, taskManager.tasks);

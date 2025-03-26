@@ -1,19 +1,26 @@
 //filename: app.js
-const express = require('express');
-const path = require('path');
+import express from 'express';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 const app = express();
 const port = 3000;
 
+import { connectToDatabase } from './config/db.js';
+
 // calling the middleware to be used
-const {
+import {
     // helps with logging routes
     loggingMiddleware,
     // redirects to another route
     redirectingMiddleware,
     errorHandlingMiddleware,
-} = require('./middleware/middleware');
+} from './middleware/middleware.js';
 
-const taskRoutes = require('./routes/taskRoutes');
+import taskRoutes from './routes/taskRoutes.js';
 
 app.use(express.urlencoded({ extended: true}));
 app.use(express.static(path.join(process.cwd(), "public")));
@@ -34,6 +41,8 @@ app.use(redirectingMiddleware(routesToRedirect, '/'));
 
 app.use(errorHandlingMiddleware('/error'));
 //listen and announce port for running server
+
+connectToDatabase();
 app.listen(port, () => {
     console.log(`Server running at http://localhost:${port}`);
 });
