@@ -7,6 +7,9 @@
     <link rel="stylesheet" href="/style.css">
 </head>
 <body>
+    <!-- Include Task Header Partial-->
+    <%- include('partials/header') %>
+
     <h1>Task List</h1>
 
     <!-- Add Task Form -->
@@ -30,49 +33,6 @@
         <button type="submit">Add Task</button>
     </form>
 
-    <!-- Search by title/desc -->
-<form action="/tasks/search" method="GET" class="search-form">
-    <input 
-        type="text" 
-        name="q" 
-        placeholder="Search tasks..." 
-        value="<%= locals.searchQuery || '' %>"
-    >
-    <button type="submit">Search</button>
-</form>
-
-<!-- Message for search results -->
-<% if (locals.searchQuery) { %>
-    <p>
-        <% if (tasks.length === 0) { %>
-            No tasks found matching "<%= searchQuery %>"
-        <% } else { %>
-            <%= tasks.length %> task(s) found for "<%= searchQuery %>"
-        <% } %>
-    </p>
-<% } %>
-
-    <!-- Filter Tasks Dropdown -->
-    <form action="/tasks/filter-tasks" method="GET" class="filter-form">
-        <label for="status">Filter by Status:</label>
-        <select id="status" name="status">
-            <option value="all">All Tasks</option>
-            <option value="completed">Completed</option>
-            <option value="uncompleted">Uncompleted</option>
-        </select>
-        <button type="submit">Filter</button>
-    </form>
-
-    <!-- Sorting options -->
-    <div class="sorting-options">
-        <span>Sort by:</span>
-        <a href="/tasks/sort?criteria=priority&order=desc">Priority (High to Low)</a>
-        <a href="/tasks/sort?criteria=priority&order=asc">Priority (Low to High)</a>
-    </div>
-
-    <!-- Back to All Tasks Link -->
-    <a href="/tasks">Back to All Tasks</a>
-    
     <!-- Task List -->
     <% if (tasks.length === 0) { %>
         <p>No tasks found. Add a new task above!</p>
@@ -99,7 +59,11 @@
             <% }); %>
         </ul>
     <% } %>
+    
     <!-- Include the footer partial -->
     <%- include('partials/footer') %>
+    
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

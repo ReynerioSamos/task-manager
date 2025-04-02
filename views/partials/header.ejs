@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Task Manager</title>
+  <link rel="stylesheet" href="/style.css"> <!-- Your custom CSS -->
+</head>
+<body>
+  <nav class="site-nav">
+    <div class="nav-container">
+      <a class="nav-brand" href="/tasks">Task Manager</a>
+      
+      <!-- Search Form -->
+      <form class="search-form" action="/tasks/search" method="GET">
+        <input type="text" name="q" placeholder="Search tasks..." value="<%= locals.searchQuery || '' %>">
+        <button type="submit">Search</button>
+      </form>
+
+      <!-- Filter Dropdown (Pure CSS) -->
+      <div class="dropdown">
+        <button class="dropdown-button">Filter</button>
+        <ul class="dropdown-menu">
+          <li><a href="/tasks/filter-tasks?status=all">All Tasks</a></li>
+          <li><a href="/tasks/filter-tasks?status=completed">Completed</a></li>
+          <li><a href="/tasks/filter-tasks?status=uncompleted">Uncompleted</a></li>
+        </ul>
+      </div>
+
+      <!-- Sort Dropdown (Pure CSS) -->
+      <div class="dropdown">
+        <button class="dropdown-button">Sort</button>
+        <ul class="dropdown-menu">
+          <li><strong>Priority</strong></li>
+          <li><a href="/tasks/sort?criteria=priority&order=desc">High to Low</a></li>
+          <li><a href="/tasks/sort?criteria=priority&order=asc">Low to High</a></li>
+          <li><hr></li>
+          <li><strong>Title</strong></li>
+          <li><a href="/tasks/sort?criteria=title&order=asc">A to Z</a></li>
+          <li><a href="/tasks/sort?criteria=title&order=desc">Z to A</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Status Messages -->
+  <% if (locals.searchQuery) { %>
+    <div class="status-message">
+      Search results for: "<%= searchQuery %>"
+      <a href="/tasks" class="clear-link">Clear search</a>
+    </div>
+  <% } %>
+
+  <% if (locals.filterStatus && locals.filterStatus !== 'all') { %>
+    <div class="status-message">
+      Filtering by: <%= filterStatus %> tasks
+      <a href="/tasks" class="clear-link">Clear filter</a>
+    </div>
+  <% } %>
+
+  <div class="container">
