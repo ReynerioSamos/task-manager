@@ -78,9 +78,8 @@ a:hover {
     text-decoration: underline;
 }
 
-/* === Navbar === */
 .site-nav {
-    background-color: grey; /* Primary blue */
+    background-color: grey;
     padding: 1rem;
     margin-bottom: 1.5rem;
 }
@@ -99,10 +98,9 @@ a:hover {
     font-size: 1.5rem;
     text-decoration: none;
     font-weight: bold;
-    margin-right: auto; /* Pushes other items to the right */
+    margin-right: auto;
 }
   
-  /* === Search Form === */
 .search-form {
     display: flex;
     flex-grow: 1;
@@ -125,7 +123,6 @@ a:hover {
     cursor: pointer;
 }
   
-/* === Dropdowns === */
 .dropdown {
     position: relative;
     display: inline-block;
@@ -174,14 +171,12 @@ a:hover {
     border: none;
     border-top: 1px solid #ddd;
 }
-  
-/* Show dropdown on hover/focus */
+
   .dropdown:hover .dropdown-menu,
   .dropdown:focus-within .dropdown-menu {
     display: block;
 }
   
-/* === Status Messages === */
 .status-message {
     background: #d1ecf1;
     color: #0c5460;
@@ -197,6 +192,45 @@ a:hover {
     right: 1rem;
     color: #0c5460;
     text-decoration: underline;
+}
+
+.error-container {
+    text-align: center;
+    padding: 50px 20px;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.error-code {
+    font-size: 120px;
+    color: #dc3545;
+    margin: 0;
+    font-weight: bold;
+}
+
+.error-message {
+    font-size: 24px;
+    margin-bottom: 30px;
+}
+
+.error-details {
+    color: #6c757d;
+    margin-bottom: 30px;
+}
+
+.back-home {
+    display: inline-block;
+    background-color: #007BFF;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 4px;
+    text-decoration: none;
+    margin-top: 20px;
+}
+
+.back-home:hover {
+    background-color: #0056b3;
+    text-decoration: none;
 }
 
 .site-footer {

@@ -14,10 +14,6 @@ export const addTask = (req, res) => {
         priority = 'Medium' //default value
     } = req.body;
 
-    if (!title || !desc) {
-        return res.status(400).send(`Title and description are required.`);
-    }
-
     // stores and adds new task to array, logs and redirects to home
     const newTask = taskManager.addTask(title,desc, priority);
     console.log(`Added new task with priority ${priority}`);
