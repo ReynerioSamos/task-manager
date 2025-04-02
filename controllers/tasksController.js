@@ -17,13 +17,14 @@ export const addTask = (req, res) => {
     if (!title || !desc) {
         return res.status(400).send(`Title and description are required.`);
     }
-    // Validate priority or default to 'Medium'
-    const validPriorities = ['Low', 'Medium', 'High'];
-    const taskPriority = validPriorities.includes(priority) ? priority : 'Medium';
 
     // stores and adds new task to array, logs and redirects to home
     const newTask = taskManager.addTask(title,desc, priority);
-    console.log(`Added new task with priority ${taskPriority}`);
+    console.log(`Added new task with priority ${priority}`);
+
+    // looking into handling a conditional check for API Clients vs Web Browsers
+    // has the pattern of:
+    //  req.xhr || req.headers.accept.indexOf('json')
     res.redirect('/tasks');
 };
 
