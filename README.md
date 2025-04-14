@@ -1,27 +1,27 @@
 # Task Manager Web App
-Simple Task Management Web App using using node, express and JS with CSS styling
+Simple Task Management Web App Built with Node.js, Express, PostgresSQL and EJS templates.
 
-[Video Demo/Quiz3](https://youtu.be/2eCDJsDUW9w)
+[Demo Video/Quiz 4]()
 
 ## Description
 
-Allows users to create, view, toggle, delete, search, filter, and sort tasks depending on various criteria
+Allows users to create, view, toggle, delete, search, filter, and sort tasks by title or description, or in descending and ascending order.
 
 ## Features
-- Add new tasks with title, description and priority
-- Mark tasks as completed or uncompleted
-- Delete tasks
-- Search tasks by title and description
-- Filter tasks by completion status (all, completed, uncompleted)
-- Sort tasks by priority or title
-- Serviceable user interface using CSS styling with form handling via ejs templates
-
+- Create, read, update, and delete tasks
+- Mark tasks as complete/incomplete
+- Search, filter, and sort tasks
+- Responsive web interface
+- PostgreSQL database backend
 ### Prerequisites
-* Node.js (v14 or higher)
+* Node.js (v16 or higher)
+* PostgreSQL (v12 or higher)
 * npm (Node Package Manager)
 ### Dependencies
 - express
 - ejs (templating engine)
+- pg (postgres client)
+- dotenv (for .env variables)
 ### Installation
 1. Clone repository:
 ```bash
@@ -30,16 +30,43 @@ cd task-manager
 ```
 2. Install dependencies
 ```bash
-npm install express ejs
+npm install express ejs pg dotenv
+```
+3. Database setup
+	1. Start PostgreSQL
+	2. Create database and user:
+```bash
+sudo -u postgres psql
+```
+Then in PostgreSQL shell:
+```sql
+CREATE DATABASE tasks;
+CREATE USER tasks WITH ENCRYPTED PASSWORD 'taskspass';
+GRANT ALL PRIVILEGES ON DATABASE tasks TO tasks;
+\q
+```
+Run migration to create initial db schema:
+```bash
+psql -U tasks -d tasks -a -f migrations/00001_initial_schema.sql
+```
+4. Environment Configuration
+	1. Create a .env file in the program root with variables default (Or you can provide your own variables if different from default)
+```env
+# Database Connection
+DB_HOST=localhost
+DB_USER=tasks
+DB_PASSWORD=taskspass
+DB_NAME=tasks
+DB_PORT=5432
 ```
 
 ### Running the application
 ```bash
-node app.js
+npm run dev
 ```
 OR
 ```bash
-node start
+npm start
 ```
 
 The app can be accessed via http://localhost:3000
