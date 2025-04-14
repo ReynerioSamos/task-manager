@@ -1,110 +1,108 @@
 // Filename: controllers/tasksController.js
-import { Task, TaskManager } from "../models/tasksModel.js";
+import TaskManager from "../models/tasksModel.js";
+import { Task } from "../models/tasksModel.js";
 const taskManager = new TaskManager();
 
-export const getHome = (req, res) => {
-    const tasks = taskManager.tasks;
-    res.render('tasks', { tasks });
-};
-
-export const addTask = (req, res) => {
-    const {
-        title,
-        desc,
-        priority = 'Medium' //default value
-    } = req.body;
-
-    // stores and adds new task to array, logs and redirects to home
-    const newTask = taskManager.addTask(title,desc, priority);
-    console.log(`Added new task with priority ${priority}`);
-
-    // looking into handling a conditional check for API Clients vs Web Browsers
-    // has the pattern of:
-    //  req.xhr || req.headers.accept.indexOf('json')
-    res.redirect('/tasks');
-};
-
-export const toggleTask = (req, res) => {
-    const taskID = parseInt(req.params.id);
-    console.log(`Attempting to toggle task with ID: ${taskID}`);
-
-    const task = taskManager.getTask(taskID);
-    if (!task) {
-        console.log(`Task with ID: ${taskID} was not found`);
-        return res.status(404).send(`Task not found`);
+export const getHome = async (req, res) => {
+    try {
+        const tasks = await taskManager.displayAllTasks();
+        res.render('tasks', { tasks });
+    } catch (err) {
+        console.error('Error fetching tasks', err);
+        res.status(500).render('500');
     }
+};
 
-    task.toggleCompleted();
-    console.log(`Task with ID: ${taskID} was successfully toggled with new status: `, task.completed);
-    res.redirect('/tasks');
+export const addTask = async (req, res) => {
+    try {
+        const { title, desc, priority = 'Medium' } = req.body;
+        await taskManager.addTask(title, desc, priority);
+        res.redirect('/tasks');
+    } catch (err) {
+        console.error('Error adding tasks:', err);
+        res.status(500).render('500');
+    }
+};
+
+export const toggleTask = async (req, res) => {
+    try {
+        const taskID = parseInt(req.params.id);
+        const task = await taskManager.toggleTask(taskID);
+
+        if (!task) {
+            return res.status(404).send('Task not found :(');
+        }
+        
+        res.redirect('/tasks');
+    } catch (err) {
+        console.error('Error toggling task: ', err);
+        res.status(500).render('500');
+    }
  };
 
- export const deleteTask = (req, res) => {
-    const taskID = parseInt(req.params.id, 10);
-    console.log(`Attempting to delete task with ID: ${taskID}`);
-    console.log(`Current tasks:`, taskManager.tasks);
-
-    const task = taskManager.getTask(taskID);
-    if (!task) {
-        console.log(`Task with ID: ${taskID} not found`);
-        return res.status(404).send(`Task not found`);
+ export const deleteTask = async (req, res) => {
+    try {
+        const taskID = parseInt(req.params.id);
+        await taskManager.deleteTask(taskID);
+        res.redirect('/tasks');
+    } catch (err) {
+        console.error('Error deleting task: ', err);
+        res.status(500).render('500');
     }
-    
-    taskManager.deleteTask(taskID);
-    console.log(`Task with ID: ${taskID} deleted successfully`)
-    console.log(`Remaining tasks:`, taskManager.tasks);
-    res.redirect('/tasks');
  };
 
- export const searchTask = (req, res) => {
-    const query = req.query.q; // Get the search query from query parameter
+ export const searchTask = async (req, res) => {
+    try {
+        const query = req.query.q;
+        const tasks = query && query.trim() !== ''
+            ? await taskManager.searchTasks(query)
+            : await taskManager.getAllTasks();
 
-    // Handle empty search query
-    if (!query || query.trim() === '') {
-        return res.render('tasks', { tasks: taskManager.tasks, searchQuery: query });
+        res.render('tasks', { tasks, searchQuery: query });
+    } catch (err) {
+        console.error('Error searching tasks: ', err);
+        res.status(500).render('500');
     }
-
-    // Perform the search
-    const searchResults = taskManager.searchTasks(query);
-
-    // Render the tasks view with search results
-    res.render('tasks', { 
-        tasks: searchResults, 
-        searchQuery: query 
-    });
 };
 
-export const filterTask = (req, res) => {
-    const status = req.query.status; // Get the status from the query parameter
-
-    // Use the filterTasks method to get the filtered tasks
-    const filteredTasks = taskManager.filterTasks(status);
-
-    // Render the tasks.ejs file with the filtered tasks
-    res.render('tasks', { tasks: filteredTasks });
-};
-
-export const sortTask = (req, res) => {
-    const { criteria, order } = req.query;
-    
-    // Sort tasks
-    const sortedTasks = taskManager.sortTasks(criteria, order);
-
-    res.render('tasks', { 
-        tasks: sortedTasks,
-        sortCriteria: criteria,
-        sortOrder: order
-    });
-};
-
-export const getTaskID = (req, res) => {
-    const taskID = parseInt(req.params.id, 10);
-    const task = taskManager.getTask(taskID);
-
-    if (!task) {
-        return res.status(400).send(`Task not found`);
+export const filterTask = async (req, res) => {
+    try {
+        const status = req.query.status;
+        const tasks = await taskManager.filterTasks(status);
+        res.render('tasks', { tasks });
+    } catch (err) {
+        console.error('Error filtering tasks: ', err);
+        res.status(500).render('500');
     }
-    res.render('task', {
-        task
-    });
+};
+
+export const sortTask = async (req, res) => {
+    try {
+        const { criteria, order } = req.query;
+        const tasks = await taskManager.sortTasks(criteria, order);
+        res.render('tasks', {
+            tasks,
+            sortCriteria: criteria,
+            sortOrder: order
+        });
+    } catch (err) {
+        console.error('Error sorting tasks: ', err);
+        res.status(500).render('500');
+    }
+};
+
+export const getTaskID = async (req, res) => {
+    try {
+        const taskID = parseInt(req.params.id);
+        const task = await taskManager.getTask(taskID);
+
+        if (!task) {
+            return res.status(404).send('Task not found');
+        }
+
+        res.render('task', { task });
+    } catch (err) {
+        console.error('Error fetching task: ', err);
+        res.status(500).render('500');
+    }
  };

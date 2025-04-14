@@ -1,14 +1,16 @@
 // Filename: models/tasksModel.js
-// import { query } from "../config/db.js";
+import { query } from "../config/db.js";
 
 export class Task {
     // all tasks are initialized as uncompleted with medium prio
-    constructor(id, title, desc, completed = false, priority = 'Medium') {
+    constructor(id, title, desc, completed = false, priority = 'Medium', created_at, updated_at) {
         this.id = id;
         this.title = title;
         this.desc = desc;
         this.completed = completed;
         this.priority = priority;
+        this.created_at = created_at;
+        this.updated_at = updated_at;
 
         // Validate and set priority
         const validPriorities = ['Low', 'Medium', 'High'];
@@ -47,89 +49,182 @@ export class Task {
 }
 
 export class TaskManager {
+    // Commented out as data is not stored in a DB, kep around incase
+/*
     constructor() {
         this.tasks = [];
         this.taskCounter = 1; // Added to manage task IDs
     }
+*/
 
+    // Operations Converted to asycn to handle db functions without halting
     // add a new task to the array, takes task obj
-    addTask(title, desc, priority = 'Medium') {
+
+    async addTask(title, desc, priority = 'Medium') {
         const validPriorities = ['Low', 'Medium', 'High'];
         const taskPriority = validPriorities.includes(priority) ? priority : 'Medium';
         
-        const newTask = new Task(
-            this.taskCounter++, 
-            title, 
-            desc, 
-            false, 
-            taskPriority
+        const result = await query(
+            `INSERT INTO tasks (title, description, priority)
+             VALUES ($1, $2, $3)
+             RETURNING *`,
+             [title, desc, taskPriority]
         );
         
-        this.tasks.push(newTask);
-        return newTask;
+        return new Task(
+            result.rows[0].id,
+            result.rows[0].title,
+            result.rows[0].description,
+            result.rows[0].completed,
+            result.rows[0].priority,
+            result.rows[0].created_at,
+            result.rows[0].updated_at
+        );
     }
 
     // display task given id from array, takes int
-    getTask(taskID) {
-        const task = this.tasks.find(task => task.id === taskID);
-        return task;
+    async getTask(taskID) {
+        const result = await query(
+            `SELECT * FROM tasks WHERE id = $1`,
+            [taskID]
+        );
+
+        // If no result is found in db
+        if (result.rows.length === 0) return null;
+
+        const taskData = result.rows[0];
+        return new Task(
+            taskData.id,
+            taskData.title,
+            taskData.description,
+            taskData.completed,
+            taskData.priority,
+            taskData.created_at,
+            taskData.updated_at
+        );
     }
 
     // delete task given id from array, takes int
-    deleteTask(taskIDToDelete) {
-        this.tasks = this.tasks.filter(task => task.id !== taskIDToDelete);
+    async deleteTask(taskID) {
+        await query (
+            `DELETE FROM tasks WHERE id = $1`,
+            [taskID]
+        );
     }
 
     // display all current tasks in the array
-    displayAllTasks() {
-        this.tasks.forEach(task => task.displayTask());
+    async displayAllTasks() {
+        const result = await query(`SELECT * FROM tasks`);
+        return result.rows.map(row => new Task (
+            row.id,
+            row.title,
+            row.description,
+            row.completed,
+            row.priority,
+            row.created_at,
+            row.updated_at
+        ));
+    }
+    // included now that db handles toggling
+    async toggleTask(taskID) {
+        const result = await query(
+            `UPDATE tasks
+             SET completed = NOT completed,
+                 updated_at = NOW()
+             WHERE id = $1
+             RETURNING *`,
+             [taskID]
+        );
+
+        if (result.rows.length === 0) return null;
+
+        const taskData = result.rows[0];
+        return new Task(
+            taskData.id,
+            taskData.title,
+            taskData.description,
+            taskData.completed,
+            taskData.priority,
+            taskData.created_at,
+            taskData.updated_at,
+        );
     }
 
-    searchTasks(query) {
+    async searchTasks(query) {
         // Convert query to lowercase for case-insensitive search
         const lowercaseQuery = query.toLowerCase().trim();
         
-        // Filter tasks where either title or description includes the query
-        return this.tasks.filter(task => 
-            task.title.toLowerCase().includes(lowercaseQuery) || 
-            task.desc.toLowerCase().includes(lowercaseQuery)
+        const result = await query(
+            `SELECT * FROM tasks
+             WHERE LOWER(title) LIKE $1
+             OR LOWER(description) LIKE $1`,
+            [lowercaseQuery]
         );
+
+        return result.rows.map(row => new Task(
+            row.id,
+            row.title,
+            row.description,
+            row.completed,
+            row.priority,
+            row.created_at,
+            row.updated_at,
+        ));
     }
     
     //filters tasks based on their status, takes it a string and corresponds correct boolean val
-    filterTasks(status) {
+    async filterTasks(status) {
+        // Requires a split query, as filter is a conditional
+        let queryText = 'SELECT * FROM tasks'; // initial query
+        let params = []; //additional query text for conditionals
+
         if (status === 'completed') {
-            return this.tasks.filter(task => task.completed === true);
+            queryText += ' WHERE completed = true';
         } else if (status === 'uncompleted') {
-            return this.tasks.filter(task => task.completed === false);
-        } else {
-            return this.tasks; // Return all tasks if status is 'all' or invalid
+            queryText += ' WHERE completed = false';
         }
+
+        const result = await query(queryText, params);
+        return result.rows.map(row => new Task(
+            row.id,
+            row.title,
+            row.description,
+            row.completed,
+            row.priority,
+            row.created_at,
+            row.updated_at,
+        ));
     }
 
-    sortTasks(criteria = 'priority', order = 'desc') {
-        // Define priority order
-        const priorityOrder = {
-            'High': 3,
-            'Medium': 2,
-            'Low': 1
-        };
+    async sortTasks(criteria = 'priority', order = 'desc') {
+        let queryText = 'SELECT * FROM tasks';
 
-        // sorts from highest to lowest or lowest to highest based on criteria (in this case prio)
-        return this.tasks.sort((a, b) => {
-            switch(criteria) {
-                case 'priority':
-                    const priorityComparison = priorityOrder[b.priority] - priorityOrder[a.priority];
-                    return order === 'desc' ? priorityComparison : -priorityComparison;
-                
-                case 'title':
-                    return order === 'desc' 
-                        ? b.title.localeCompare(a.title) 
-                        : a.title.localeCompare(b.title);
-                
-                default:
-                    return 0;
-            }
-        });
+        
+        // Define priority order
+        // Since prio is defined by an int of 1 2 or 3, we use those to order them in query call
+        if (criteria == 'priority'){
+            queryText += 
+                ` ORDER BY
+                    CASE priority
+                        WHEN 'High' THEN 1
+                        WHEN 'Medium' THEN 2
+                        WHEN 'Low' THEN 3
+                    END ${order === 'desc' ? 'ASC' : 'DESC'}`;
+        } else if (criteria === 'title') { //if by title, it returns either asc or desc
+            queryText += ` ORDER BY title ${order === 'desc' ? 'DESC' : 'ASC'}`;
+        }
+        
+        const result = await query(queryText);
+        return result.rows.map(row => new Task(
+            row.id,
+            row.title,
+            row.description,
+            row.completed,
+            row.priority,
+            row.created_at,
+            row.updated_at,
+        ));
     }
 }
+
+export default TaskManager;

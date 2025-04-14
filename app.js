@@ -26,7 +26,10 @@ app.use(express.urlencoded({ extended: true}));
 app.use(express.static(path.join(process.cwd(), "public")));
 app.use(express.json());
 app.set("view engine", "ejs");
-app.set("views", path.join(process.cwd(), "views"));
+app.set("views", [
+    path.join(process.cwd(), 'views'),
+    path.join(process.cwd(), 'views/errorpages')
+]);
 
 //redirects '/' to '/tasks' since main functionality of app is there ans using tasks.ejs view
 app.get('/', (req, res) => {res.redirect('/tasks');});
@@ -46,8 +49,8 @@ app.use ((req, res, next) => {
     res.status(404).render('404');
 });
 
-app.use ((req, res, next) => {
-    console.error(errorHandlingMiddleware);
+app.use ((err, req, res, next) => {
+    console.error('Server error:', err);
     res.status(500).render('500');
 });
 
