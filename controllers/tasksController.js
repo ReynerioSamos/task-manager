@@ -53,12 +53,12 @@ export const toggleTask = async (req, res) => {
 
  export const searchTask = async (req, res) => {
     try {
-        const query = req.query.q;
-        const tasks = query && query.trim() !== ''
-            ? await taskManager.searchTasks(query)
-            : await taskManager.getAllTasks();
+        const searchQuery = req.query.q;
+        const tasks = searchQuery && searchQuery.trim() !== ''
+            ? await taskManager.searchTasks(searchQuery)
+            : await taskManager.displayAllTasks();
 
-        res.render('tasks', { tasks, searchQuery: query });
+        res.render('tasks', { tasks, searchQuery: searchQuery });
     } catch (err) {
         console.error('Error searching tasks: ', err);
         res.status(500).render('500');

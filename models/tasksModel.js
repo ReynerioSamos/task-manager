@@ -150,15 +150,15 @@ export class TaskManager {
         );
     }
 
-    async searchTasks(query) {
+    async searchTasks(searchQuery) {
         // Convert query to lowercase for case-insensitive search
-        const lowercaseQuery = query.toLowerCase().trim();
+        const lowercaseSearchQuery = `%${searchQuery.toLowerCase().trim()}%`;
         
         const result = await query(
             `SELECT * FROM tasks
              WHERE LOWER(title) LIKE $1
              OR LOWER(description) LIKE $1`,
-            [lowercaseQuery]
+            [lowercaseSearchQuery]
         );
 
         return result.rows.map(row => new Task(
